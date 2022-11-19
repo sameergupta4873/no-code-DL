@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block result%}
+    <div class="m-10 border-10 bg-white-800">
+        {%for key in data %}
+            <div class="p-4"> {{key}} : {{data[key]}} </div>
+        {%endfor%}
+    </div>
+
+{% endblock result %}

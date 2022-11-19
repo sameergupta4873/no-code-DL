@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block form %}
+<h1>CNN</h1>
+
+    <form action="/cnn" method="post" class="flex-coloumn items-center" >
+        <div id="container" class="flex-wrap [&>*]:m-2 p-4 [&>*]:rounded-md [&>input]:outline-double">
+            <label for="layer1">Layer1</label>
+            <input  type="text" name="layer1">
+
+            <label for="layer2">Layer2</label>
+            <input type="text" name="layer2">
+
+            <label for="layer3">Layer3</label>
+            <input type="text" name="layer3">
+
+            <!-- <input type="text" name="layer3">
+            <label for="layer3">Layer3</label> -->
+
+
+            <label for="layer4">Layer4</label>
+            <input type="text" name="layer4">
+
+            <label for="layer5">Layer5</label>
+            <input type="text" name="layer5">
+
+            <label for="layer6">Layer6</label>
+            <input type="text" name="layer6">
+
+            <label for="layer7">Layer7</label>
+            <input type="text" name="layer7">
+
+            <button type ="button" id="another" class="bg-orange-400 rounded-md p-3 hover:bg-red-700"><span>another layer</span></button>
+        </div>
+
+        <button type="submit" id="sbmt" class="bg-orange-400 rounded-md p-3 hover:bg-red-700 cursor-pointer">Submit</button>
+    </form>
+
+    <form id="d-form" action="/" method="post" class="flex-coloumn">
+        <div class="m-4  [&>*]:m-2 p-4">
+            <input type="radio" name="layer" id="conv">
+            <label for = "conv">Conv2d</label>
+
+            <input type="radio" name="layer" id="relu">
+            <label for ="relu">Relu Activation</label>
+
+            <input type="radio" name="layer" id="mpool">
+            <label for="mpool">Maxpool</label>
+
+            <input type="radio" name="layer" id="dense">
+            <label for="dense">Dense</label>
+
+            <input type="radio" name="layer" id="softmax">
+            <label for="softmax">Softmax</label>
+
+        </div>
+    </form>
+{% endblock form %}
