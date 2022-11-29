@@ -1,7 +1,7 @@
 from src import app
 from flask import render_template,request,redirect,url_for,jsonify
 from werkzeug.datastructures import ImmutableMultiDict
-from src.code import getcode
+from src.destructure_conv import getconvmodel
 
 @app.route('/')
 def home() :
@@ -19,11 +19,17 @@ def cnn() :
         
         #return render_template('result.html',data=data)
         #return redirect(f'/result/{data}')
-        code = getcode(data)
+        code = getconvmodel(data['nodes'],data['adjList'])
         print(code)
         
         return jsonify({'code':code})
     return render_template('home.html')
+
+@app.route('/standard',methods=["GET","POST"])
+def standard() :
+    if request.method == 'POST' :
+        imd = ImmutableMultiDict(request.form)
+        data = imd.to_dict()
 
 
 

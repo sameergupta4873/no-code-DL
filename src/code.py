@@ -1,3 +1,5 @@
+#this was the initial shitty version - totally outdated now.
+
 pre = '''
 class Model(Module) :
     def __init__(self,num_channel=3,oc=10) :

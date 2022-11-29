@@ -261,4 +261,70 @@ torch.save(model, args["model"])
 
 
 
+def getconvmodel(data,graph) :
+    model = f'''
+import torch
+from  torch import nn
+class MyModel(nn.Module) :
+    def __init__(self,num_channels=1,num_classes=10) :
+        super(MyModel, self).__init__()
+        {generateself(getnodes(data),data)}
+    def forward(self, x) :
+        {generateforward(getnodes(data),data,graph)}
+        return nodesouput[-1]
+
+
+#this will be coming from user request     
+INIT_LR = 1e-3
+BATCH_SIZE = 64
+EPOCHS = 10
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+model = MyModel(1,10).to(device)
+opt = Adam(model.parameters(), lr=INIT_LR)
+lossFn = nn.NLLLoss()
+
+for epoch in range(EPOCHS) :
+    model.train()
+    totalTrainLoss = 0
+	totalValLoss = 0
+
+	trainCorrect = 0
+	valCorrect = 0
+
+	for (x, y) in trainDataLoader:
+
+		(x, y) = (x.to(device), y.to(device))
+
+		pred = model(x)
+		loss = lossFn(pred, y)
+
+		opt.zero_grad()
+		loss.backward()
+		opt.step()
+
+		totalTrainLoss += loss
+		trainCorrect += (pred.argmax(1) == y).type(
+			torch.float).sum().item()
+
+with torch.no_grad():
+
+    model.eval()
+
+    for (x, y) in valDataLoader:
+
+        (x, y) = (x.to(device), y.to(device))
+
+        pred = model(x)
+        totalValLoss += lossFn(pred, y)
+
+        valCorrect += (pred.argmax(1) == y).type(
+            torch.float).sum().item()
+
+
+torch.save(model, args["model"])
+'''
+    return model
 print(model)
