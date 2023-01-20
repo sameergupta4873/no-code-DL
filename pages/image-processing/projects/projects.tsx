@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './projects.module.css'
 
 
@@ -39,6 +39,18 @@ export default function Projetcs() {
     }])
     router.push("/image-processing/project-detail/project")
   }
+
+  const [user, setUser] = useState(null)
+
+  // fetch data
+  useEffect(() => {
+    const value = localStorage.getItem('user');
+    const user = !!value ? JSON.parse(value) : undefined;
+    setUser(user)
+    if(!user){
+      router.push('/auth/login')
+    }
+  }, [])
 
 
   return (
