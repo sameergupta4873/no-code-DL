@@ -83,6 +83,7 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   max-width: 300px;
+  background: #ffffff;
 }
 
 .card:hover,
@@ -116,7 +117,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .card,
+  .card{
+    background: #000000;
+    border: 1px solid #222222;
+  }
   .footer {
     border-color: #222;
   }

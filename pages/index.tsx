@@ -28,18 +28,18 @@ export default function Home() {
             <p>Create image Processing models and perform image related tasks.</p>
           </Link>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
+          <Link href="/text-prototyping/projects/projects" className={styles.card}>
             <h2>Text / Sequence Prototyping &rarr;</h2>
             <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatibus.</p>
-          </a>
+          </Link>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
+          <Link
+            href="/standard-networks/projects/projects"
             className={styles.card}
           >
             <h2>Standard Networks &rarr;</h2>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis.</p>
-          </a>
+          </Link>
 
           
         </div>
