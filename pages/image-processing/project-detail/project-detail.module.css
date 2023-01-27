@@ -70,7 +70,7 @@
   display: flex;
   width: 400x;
   flex-direction: column;
-  margin-top: 5rem;
+  margin-top: 8rem;
 }
 
 .card {
@@ -88,7 +88,7 @@
 }
 
 .canvas {
-  margin: 5.5rem 0.5rem;
+  margin: 1rem 0.5rem;
   padding: 0.75rem 2rem;
   text-align: left;
   color: inherit;

@@ -1,41 +1,39 @@
 import React from 'react'
 
-const Timeline = () => {
+const Timeline = ({ project }) => {
     return (
         <div>
-
-            <ol class="relative border-l border-gray-200 dark:border-gray-700">
-                <li class="mb-10 ml-6">
-                    <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-[#000000]">
-                        <img class="rounded-full shadow-lg" src="https://img.myloview.com.br/adesivos/human-icon-user-symbol-profile-sign-vector-illustration-700-216582565.jpg" alt="Bonnie image" />
-                    </span>
-                    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:bg-[#000000] dark:border-stone-800">
-                        <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">just now</time>
-                        <div class="text-sm font-normal text-gray-500 dark:text-gray-300">Bonnie moved <a href="#" class="font-semibold text-blue-600 dark:text-blue-500 hover:underline">Jese Leos</a> to <span class="bg-gray-100 text-gray-800 text-xs font-normal mr-2 px-2.5 py-0.5 rounded dark:bg-gray-600 dark:text-gray-300">Funny Group</span></div>
-                    </div>
-                </li>
-                <li class="mb-10 ml-6">
-                    <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                        <img class="rounded-full shadow-lg" src="https://img.myloview.com.br/adesivos/human-icon-user-symbol-profile-sign-vector-illustration-700-216582565.jpg" alt="Thomas Lean image" />
-                    </span>
-                    <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-[#000000] dark:border-stone-800">
-                        <div class="items-center justify-between mb-3 sm:flex">
-                            <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">2 hours ago</time>
-                            <div class="text-sm font-normal text-gray-500 lex dark:text-gray-300">Thomas Lean commented on  <a href="#" class="font-semibold text-gray-900 dark:text-white hover:underline">Flowbite Pro</a></div>
-                        </div>
-                    </div>
-                </li>
-                <li class="ml-6">
-                    <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
-                        <img class="rounded-full shadow-lg" src="https://img.myloview.com.br/adesivos/human-icon-user-symbol-profile-sign-vector-illustration-700-216582565.jpg" alt="Jese Leos image" />
-                    </span>
-                    <div class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:bg-[#000000] dark:border-stone-800">
-                        <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">1 day ago</time>
-                        <div class="text-sm font-normal text-gray-500 lex dark:text-gray-300">Jese Leos has changed <a href="#" class="font-semibold text-blue-600 dark:text-blue-500 hover:underline">Pricing page</a> task status to  <span class="font-semibold text-gray-900 dark:text-white">Finished</span></div>
-                    </div>
-                </li>
-            </ol>
-
+            {project &&
+                <ol class="relative border-l border-gray-200 dark:border-gray-700">
+                    {project.commits.map((commit) => {
+                        return (
+                            <li class="mb-5 ml-6">
+                                <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-[#000000]">
+                                    <img class="rounded-full shadow-lg" src="https://img.myloview.com.br/adesivos/human-icon-user-symbol-profile-sign-vector-illustration-700-216582565.jpg" alt="Bonnie image" />
+                                </span>
+                                <div className='mx-2 mt-1'>{commit.commiter}</div>
+                                <div class="items-center p-4 justify-between bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:bg-[#000000] dark:border-stone-800">
+                                    <div className='flex flex-col'>
+                                        <span className='text-lg'>{commit.commitMessage}</span>
+                                        <span className='ml-3 text-stone-500'>commited just now</span>
+                                    </div>
+                                    <div>
+                                        <span className='px-3 pt-2 pb-1 rounded-xl flex justify-between'>
+                                            <span className='bg-stone-900  px-3 pt-2 pb-1 rounded-xl flex justify-between'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2" onClick={() => navigator.clipboard.writeText(`${commit._id}`)}>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6" />
+                                            </svg>
+                                            
+                                            {commit._id}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        )
+                    })}
+                </ol>
+            }
         </div>
     )
 }
