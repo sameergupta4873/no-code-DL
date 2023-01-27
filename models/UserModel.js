@@ -13,6 +13,20 @@ const userSchema = mongoose.Schema({
         type: String,
         require: true
     },
+    projects: [
+        {
+            project_id: {
+                type: String,
+            },
+            category: {
+                type: String,
+            },
+            isAuthor: {
+                type: Boolean,
+                default: false
+            }
+        }
+    ]
 },{timestamps:true}
 );
 
