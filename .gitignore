@@ -48,3 +48,15 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# saved models
+*.pt
+
+#environment variables
+.env
+
+#random text files
+*.txt
+
+#dataset
+data/*
