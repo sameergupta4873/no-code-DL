@@ -12,7 +12,7 @@ def convolution(node) :
             dilation = args['dilation'] if 'dilation' in args else 1
             groups = args['groups'] if 'groups' in args else 1
             bias = args['bias'] if 'bias' in args else True
-            padding_mode = args['padding_mode'] if 'padding_mode' in args else 'zeros'
+            padding_mode = args['padding_mode'] if 'padding_mode' in args else '\'zeros\''
             return f'nn.Conv2d({in_channels}, {out_channels}, {kernel_size}, {stride}, {padding}, {dilation}, {groups}, {bias}, {padding_mode})' 
 
 
