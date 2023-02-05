@@ -1,22 +1,14 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
 
 const ProjectBar = ({ project, setTab }) => {
   const router = useRouter()
-  const [user, setUser] = useState(null);
-  const [team, setTeam] = useState(false);
-  useEffect(() => {
-    const value = localStorage.getItem('user');
-    const user = !!value ? JSON.parse(value) : undefined;
-    if (user) {
-      setUser(user)
-      return;
-    }
-    if (!user) {
-      router.push('/auth/login')
-      window.location.reload();
-    }
-  }, [])
+  const userLogin = useSelector(state=> state.userLogin)
+  const {Loading,error,userInfo} = userLogin
+
+  const user = userInfo && userInfo.user
+
   return (
     <div className='pt-5 px-10 bg-[#000000] border-b border-stone-800'>
       <div className='flex'>

@@ -5,7 +5,7 @@ const Timeline = ({ project }) => {
         <div>
             {project &&
                 <ol class="relative border-l border-gray-200 dark:border-gray-700">
-                    {project.commits.map((commit) => {
+                    {project.commits.slice().reverse().map((commit) => {
                         return (
                             <li class="mb-5 ml-6">
                                 <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-200 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-[#000000]">

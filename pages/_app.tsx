@@ -1,12 +1,17 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import Navbar from '../components/Navbar'
 
-export default function App({ Component, pageProps }: AppProps) {
+import "../styles/globals.css";
+import { wrapper, store } from "../store";
+import { Provider } from "react-redux";
+
+function MyApp({ Component, pageProps }) {
   return (
-      <div className="bg-[#fafafa] dark:bg-[#111111]">
-        <Navbar/>
+    <>
+      <Provider store={store}>
         <Component {...pageProps} />
-      </div>
-  )
+      </Provider>
+    </>
+  );
 }
+
+export default wrapper.withRedux(MyApp);
+<div className="bg-[#fafafa] dark:bg-[#111111]"></div>

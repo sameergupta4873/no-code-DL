@@ -3,49 +3,45 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import code from '../../assests/code.gif'
 import Image from 'next/image'
+import { useDispatch, useSelector } from 'react-redux'
+import {loginAction } from '../../actions/userActions'
 
 const login = () => {
-    const router = useRouter()
-    const [user, setUser] = useState(null);
+    const router = useRouter();
+    const dispacth = useDispatch();
+    const userLogin = useSelector(state=> state.userLogin)
+    const {Loading,error,userInfo} = userLogin
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
-    const data = {
-        email: email,
-        password: password
-    }
     let axiosConfig = {
         withCredentials: true,
     }
-    const loginHandler = async () => {
+    const loginHandler =  () => {
         try {
-            const res = await axios.post(
-                'http://localhost:4000/api/v1/users/login',
-                data,
-                axiosConfig
-            )
-            setUser(res.data);
-
-            return res
+            dispacth(loginAction(email, password, axiosConfig))
+            if(userInfo){
+                router.push('/')
+            }
         } catch (error) {
             console.log(error)
         }
     }
-    useEffect(() => {
-        if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-            router.push('/')
-        }
-    }, [user])
+    // useEffect(() => {
+    //     if (user) {
+    //         localStorage.setItem('user', JSON.stringify(user));
+    //         router.push('/')
+    //     }
+    // }, [user])
     return (
         <div className='flex w-full'>
             <div className='w-[45%] mt-44 ml-20'>
 
                 <h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">No Code </span>  AI/ML/DL</h1>
-                <p class="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">Here at Flowbite we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p>
+                <p class="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">Here at No Code Users with no deep learning or programming experience can quickly develop models of their choice to solve their problems</p>
 
                 <blockquote class="text-xl italic font-semibold text-gray-900 dark:text-white mt-10">
                     <svg aria-hidden="true" class="w-10 h-10 text-gray-400 dark:text-gray-600" viewBox="0 0 24 27" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.017 18L14.017 10.609C14.017 4.905 17.748 1.039 23 0L23.995 2.151C21.563 3.068 20 5.789 20 8H24V18H14.017ZM0 18V10.609C0 4.905 3.748 1.038 9 0L9.996 2.151C7.563 3.068 6 5.789 6 8H9.983L9.983 18L0 18Z" fill="currentColor" /></svg>
-                    <p>"Flowbite is just awesome. It contains tons of predesigned components and pages starting from login screen to complex dashboard. Perfect choice for your next SaaS application."</p>
+                    <p>"No-Code DL - A no-code tool for users as well as developers to collaborate and build deep learning models using drag and drop functionality."</p>
                 </blockquote>
 
 

@@ -9,21 +9,32 @@ import 'reactflow/dist/style.css';
 import ProjectBar from '../../../components/ProjectBar'
 import Timeline from '../../../components/Timeline'
 import axios from 'axios'
-
+import Conversation from '../../../components/Conversation'
+import Navbar from '../../../components/Navbar'
+import { useDispatch, useSelector } from 'react-redux'
+import {getProductById, listProductDetails, listProducts} from '../../../actions/productActions'
 
 
 
 
 
 export default function Projetcs() {
-
-
-
-
-    const [project, setProject] = useState(null);
+    const router = useRouter();
+    var project_id = router.query['']
+    const dispatch = useDispatch();
     var isSave = false;
-
-    let id = project && project.commits && project.commits.at(-1) ? project.commits.at(-1).Node.length : 1;
+    const productList = useSelector(state=> state.productList)
+    const {productData} = productList
+    const productDetails = useSelector(state=> state.productDetails)
+    const {products} = productDetails
+    const [project, setProject] = useState(null);
+    let id = 1;
+    // let id = project && project.commits ? project.commits.at(-1).Node.length +1  : 1;
+    console.log('Hi',id);
+    var project_id = router.query['']
+    const getId = () => {
+        return `${id++}`
+    };
     const [initialNodes, setInitialNodes] = useState([
         {
             id: '0',
@@ -64,15 +75,13 @@ export default function Projetcs() {
                 y: event.clientY - reactFlowBounds.top,
             });
             const newNode = {
-                id: `${id}`,
-                // id:'4',
+                id: getId(),
                 position,
                 data: { label: `${data.label}`, nodeData: data },
                 targetPosition: 'left',
                 sourcePosition: 'right'
             };
             setNodes((nds) => nds.concat(newNode));
-            id++;
         },
         [reactFlowInstance]
     );
@@ -197,35 +206,19 @@ export default function Projetcs() {
         }
     }
     //#########################  //######################### 
-    const router = useRouter();
-    var project_id = router.query['id']
     const [tab, setTab] = useState('layer');
     const [commitMessage, setCommitMessage] = useState("");
     const [success, setSuccess] = useState(false);
     const [team, setTeam] = useState(false);
     const [addTeam, setAddTeam] = useState(false);
+    const [showCode, setShowCode] = useState(false);
+    const userLogin = useSelector(state=> state.userLogin)
+    const {Loading,error,userInfo} = userLogin
 
-    if (typeof window !== "undefined") {
-        var project_id_1 = window.location.href.split('=')[1]
-        var project_id = project_id_1.split('&')[0]
-    }
-    const [user, setUser] = useState(null);
+    const user = userInfo && userInfo.user
 
-    const getImageHandler = async () => {
-        try {
-            const res = await axios.get(
-                `http://localhost:4000/api/v1/images/${project_id}`,
-            )
-            setProject(res.data);
-            setNodes(res.data.commits.at(-1).Node)
-            setEdges(res.data.commits.at(-1).edgeData)
-            setInitialNodes(res.data.commits.at(-1).Node)
-            setInitialEdges(res.data.commits.at(-1).edgeData)
-            return res
-        } catch (error) {
-            console.log(error)
-        }
-    }
+
+    
 
     const commitData = {
         commiter: user ? user.name : "user",
@@ -237,10 +230,13 @@ export default function Projetcs() {
     const commitHandler = async () => {
         try {
             const res = await axios.post(
-                `http://localhost:4000/api/v1/images/commit/${project_id}`,
+                `http://localhost:4000/api/v1/images/commit/${project._id}`,
                 commitData,
             )
-            setProject(res.data)
+            dispatch(listProductDetails(res));
+            // setProject(res.data)
+            dispatch(getProductById(project._id))
+            window.location.reload();
             setSuccess(true);
             return res;
         } catch (error) {
@@ -279,28 +275,39 @@ export default function Projetcs() {
             )
             setSelected(null);
             window.location.reload();
-            return ;
+            return;
         } catch (error) {
             console.log(error)
         }
     }
 
+    useEffect(() => {
+        // dispatch(listProducts(user._id));
+        
+        if(project && project.commits)  {
+            dispatch(getProductById(project._id))
+            setNodes(project.commits.at(-1).Node)
+            setEdges(project.commits.at(-1).edgeData)
+            setInitialNodes(project.commits.at(-1).Node)
+            setInitialEdges(project.commits.at(-1).edgeData)
+            return
+        }else{
+                // if(productData){
+                //     console.log(productData[0]._id);
+                //     dispatch(getProductById(productData[0]._id))
+                // }
+                // dispatch(getProductById())
+                setProject(products)
+        }
+      }, [dispatch,project, products, productData, getProductById]);
 
     // fetch data
-    useEffect(() => {
-        const value = localStorage.getItem('user');
-        const user = !!value ? JSON.parse(value) : undefined;
-        setUser(user)
-    }, [])
+    console.log(nodes);
 
-    useEffect(() => {
-        if (!project) {
-            getImageHandler()
-        }
-    }, [project])
 
     return (
         <div>
+            <Navbar/>
             {addTeam && <div className='absolute h-[1500px] w-screen bg-black z-100000 opacity-[0.9]'></div>}
             <div className="absolute top-16  w-full left-0">
                 <ProjectBar project={project} setTab={setTab} />
@@ -320,7 +327,7 @@ export default function Projetcs() {
                                     <div class=" ml-5 mb-5 rounded-lg shadow w-[300px] bg-black no-scrollbar">
                                         <ul class="max-h-[250px] py-2 overflow-y-auto text-gray-700 dark:text-gray-200 no-scrollbar" aria-labelledby="dropdownUsersButton">
                                             {project && project.members.map((item) => {
-                                                
+
                                                 return (
                                                     <li>
                                                         <a class="flex justify-between items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
@@ -589,13 +596,49 @@ export default function Projetcs() {
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75" />
                                         </svg>
                                             Commit</div></button>
-                                        <button type="button" class="mt-20 text-black font-medium rounded-lg text-sm px-5 py-2.5 border ml-5  dark:bg-[#FFFFFF] dark:hover:bg-black dark:hover:text-white dark:focus:ring-black"><div className='flex'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                                        <button type="button" class="mt-20 text-black font-medium rounded-lg text-sm px-5 py-2.5 border ml-5  dark:bg-[#FFFFFF] dark:hover:bg-black dark:hover:text-white dark:focus:ring-black" onClick={() => setShowCode(!showCode)}><div className='flex'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
                                             Generate Code</div></button>
                                     </div>
                                 </div>
+                                {showCode &&
+                                    (<>
+                                        <div id="extralarge-modal" tabindex="-1" class="fixed top-0 left-16 right-0 z-50 w-full pt-32 overflow-y-scroll">
+                                            <div class="relative w-full h-full max-w-7xl md:h-auto">
+                                                <div class="relative rounded-lg shadow bg-[#111111]">
+                                                    <div class="flex items-center justify-between p-5 border-b rounded-t dark:border-gray-600">
+                                                        <h3 class="text-xl font-medium text-white">
+                                                            Generated Code
+                                                        </h3>
+                                                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="extralarge-modal" onClick={() => setShowCode(false)}>
+                                                            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                                            <span class="sr-only">Close modal</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="p-6 space-y-6 h-[500px] w-full bg-[#00000]">
+                                                        <div className='flex h-full overflow-scroll no-scroll'>
+                                                            <div className='w-1/2 mx-5'>
+                                                                <label for="first_name" class="text-lg ml-5 mb-2 font-medium text-gray-900 dark:text-white">Model Code</label>
+                                                                <textarea id="message" rows="4" class="block p-2.5 text-sm h-full w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mx-5" placeholder="Write your thoughts here..." ></textarea>
+                                                            </div>
+
+                                                            <div className='w-1/2 mx-5'>
+                                                                <label for="first_name" class="text-lg ml-5 mb-2 font-medium text-gray-900 dark:text-white">Inference Code</label>
+                                                                <textarea id="message" rows="4" class="block p-2.5 text-sm h-full w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mx-5" placeholder="Write your thoughts here..." ></textarea>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                                        <button data-modal-hide="extralarge-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Copy</button>
+                                                        <button data-modal-hide="extralarge-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Regenerate</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>)}
                                 <div className={styles.canvas} ref={reactFlowWrapper}>
                                     <ReactFlow
                                         nodes={nodes}
@@ -624,7 +667,6 @@ export default function Projetcs() {
                             <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-success" aria-label="Close" onClick={() => {
                                 setSuccess(false);
                                 setCommitMessage("")
-                                window.location.reload()
                             }}>
                                 <span class="sr-only">Close</span>
                                 <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
@@ -634,14 +676,15 @@ export default function Projetcs() {
                 </>
             }
             {tab && tab === 'timeline' &&
-                <div className='pt-52 px-32'>
+                <div className='pt-52 px-32 h-[100vh]'>
                     <Timeline project={project} />
                 </div>
 
             }
             {tab && tab === 'conversation' &&
-                <p>Hi</p>
-
+                <div className='pt-40'>
+                    <Conversation />
+                </div>
             }
         </div>
     )
